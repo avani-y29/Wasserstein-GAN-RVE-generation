@@ -1,1 +1,2 @@
 python main.py --model WGAN-GP --is_train True --download True --dataroot datasets/cifar --dataset cifar --generator_iters 40000 --cuda False --batch_size 64
+python main.py --model WGAN-CP --is_train True --download True --dataroot datasets/cifar --dataset cifar --generator_iters 40000 --cuda False --batch_size 64

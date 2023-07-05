@@ -165,33 +165,42 @@ class WGAN_GP(object):
                     continue
 
                 z = torch.rand((self.batch_size, 100, 1, 1))
-
+                #print("....")
                 images, z = self.get_torch_variable(images), self.get_torch_variable(z)
-
+                #print(images.shape, z.shape)
                 # Train discriminator
                 # WGAN - Training discriminator more iterations than generator
                 # Train with real images
                 d_loss_real = self.D(images)
+                #print(d_loss_real.shape)
                 d_loss_real = d_loss_real.mean()
+                #print(d_loss_real.shape)
                 d_loss_real.backward(mone)
 
                 # Train with fake images
                 z = self.get_torch_variable(torch.randn(self.batch_size, 100, 1, 1))
 
                 fake_images = self.G(z)
+                #print(fake_images.shape)
                 d_loss_fake = self.D(fake_images)
+                #print(d_loss_fake.shape)
                 d_loss_fake = d_loss_fake.mean()
+                #print(d_loss_fake.shape)
                 d_loss_fake.backward(one)
 
                 # Train with gradient penalty
                 gradient_penalty = self.calculate_gradient_penalty(images.data, fake_images.data)
+                #print(gradient_penalty.shape)
                 gradient_penalty.backward()
 
 
                 d_loss = d_loss_fake - d_loss_real + gradient_penalty
+                #print(d_loss.shape)
                 Wasserstein_D = d_loss_real - d_loss_fake
+                #print(Wasserstein_D.shape)
+                
                 self.d_optimizer.step()
-                print(f'  Discriminator iteration: {d_iter}/{self.critic_iter}, loss_fake: {d_loss_fake}, loss_real: {d_loss_real}')
+                #print(f'  Discriminator iteration: {d_iter}/{self.critic_iter}, loss_fake: {d_loss_fake}, loss_real: {d_loss_real}')
 
             # Generator update
             for p in self.D.parameters():
@@ -201,11 +210,16 @@ class WGAN_GP(object):
             # train generator
             # compute loss with fake images
             z = self.get_torch_variable(torch.randn(self.batch_size, 100, 1, 1))
+            #print(z.shape)
             fake_images = self.G(z)
+            #print(fake_images.shape)
             g_loss = self.D(fake_images)
+            #print(g_loss.shape)
             g_loss = g_loss.mean()
+            #print(g_loss.shape)
             g_loss.backward(mone)
             g_cost = -g_loss
+            #t.sleep(360)
             self.g_optimizer.step()
             print(f'Generator iteration: {g_iter}/{self.generator_iters}, g_loss: {g_loss}')
             # Saving model and sampling images every 1000th generator iterations
